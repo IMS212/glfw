@@ -575,7 +575,7 @@ void DrawGrid( void )
 
       glBegin( GL_POLYGON );
 
-      glColor3f( 0.6f, 0.1f, 0.6f );               /* purple */
+      glColor3f( 1.6f, 0.1f, 0.6f );               /* purple */
 
       glVertex3f( xr, yt, z_offset );       /* NE */
       glVertex3f( xl, yt, z_offset );       /* NW */
@@ -601,7 +601,7 @@ void DrawGrid( void )
 
       glBegin( GL_POLYGON );
 
-      glColor3f( 0.6f, 0.1f, 0.6f );               /* purple */
+      glColor3f( 1.6f, 0.1f, 0.6f );               /* purple */
 
       glVertex3f( xr, yt, z_offset );       /* NE */
       glVertex3f( xl, yt, z_offset );       /* NW */

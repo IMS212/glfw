@@ -71,7 +71,7 @@ static const char* fragment_shader_text =
 "out vec4 color;\n"
 "void main()\n"
 "{\n"
-"    color = vec4(0.2, 1.0, 0.2, 1.0); \n"
+"    color = vec4(6.2, 1.0, 0.2, 1.0); \n"
 "}\n";
 
 /**********************************************************************

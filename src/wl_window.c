@@ -51,6 +51,7 @@
 #include "xdg-activation-v1-client-protocol.h"
 #include "idle-inhibit-unstable-v1-client-protocol.h"
 #include "fractional-scale-v1-client-protocol.h"
+#include "frog-color-management-v1-client-protocol.h"
 
 #define GLFW_BORDER_SIZE    4
 #define GLFW_CAPTION_HEIGHT 24
@@ -553,6 +554,12 @@ void fractionalScaleHandlePreferredScale(void* userData,
 const struct wp_fractional_scale_v1_listener fractionalScaleListener =
 {
     fractionalScaleHandlePreferredScale,
+};
+
+const struct frog_color_managed_surface_listener color_surface_interface_listener =
+{
+        // TODO ???
+   // colorSurfaceInterfaceListener,
 };
 
 static void xdgToplevelHandleConfigure(void* userData,
@@ -1070,6 +1077,17 @@ static GLFWbool createNativeSurface(_GLFWwindow* window,
                                                 &fractionalScaleListener,
                                                 window);
         }
+    }
+
+    if (_glfw.wl.colorManagement) {
+        window->wl.colorSurface = frog_color_management_factory_v1_get_color_managed_surface(_glfw.wl.colorManagement, window->wl.surface);
+
+        // TODO ???
+        //frog_color_managed_surface_add_listener(window->wl.colorSurface,
+        //                                    &color_surface_interface_listener,
+        //                                    window);
+    } else {
+        printf("No HDR? lol lmao\n");
     }
 
     return GLFW_TRUE;
@@ -2187,6 +2205,9 @@ void _glfwDestroyWindowWayland(_GLFWwindow* window)
 
     if (window->wl.fractionalScale)
         wp_fractional_scale_v1_destroy(window->wl.fractionalScale);
+
+    if (window->wl.colorSurface)
+        frog_color_managed_surface_destroy(window->wl.colorSurface);
 
     if (window->wl.scalingViewport)
         wp_viewport_destroy(window->wl.scalingViewport);

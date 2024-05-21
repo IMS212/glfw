@@ -49,6 +49,7 @@
 #include "fractional-scale-v1-client-protocol.h"
 #include "xdg-activation-v1-client-protocol.h"
 #include "idle-inhibit-unstable-v1-client-protocol.h"
+#include "frog-color-management-v1-client-protocol.h"
 
 // NOTE: Versions of wayland-scanner prior to 1.17.91 named every global array of
 //       wl_interface pointers 'types', making it impossible to combine several unmodified
@@ -81,6 +82,10 @@
 
 #define types _glfw_fractional_scale_types
 #include "fractional-scale-v1-client-protocol-code.h"
+#undef types
+
+#define types _glfw_color_management_types
+#include "frog-color-management-v1-client-protocol-code.h"
 #undef types
 
 #define types _glfw_xdg_activation_types
@@ -206,6 +211,13 @@ static void registryHandleGlobal(void* userData,
         _glfw.wl.fractionalScaleManager =
             wl_registry_bind(registry, name,
                              &wp_fractional_scale_manager_v1_interface,
+                             1);
+    }
+    else if (strcmp(interface, "frog_color_management_factory_v1") == 0)
+    {
+        _glfw.wl.colorManagement =
+            wl_registry_bind(registry, name,
+                             &frog_color_management_factory_v1_interface,
                              1);
     }
 }
@@ -984,6 +996,8 @@ void _glfwTerminateWayland(void)
         xdg_activation_v1_destroy(_glfw.wl.activationManager);
     if (_glfw.wl.fractionalScaleManager)
         wp_fractional_scale_manager_v1_destroy(_glfw.wl.fractionalScaleManager);
+    if (_glfw.wl.colorManagement)
+        frog_color_management_factory_v1_destroy(_glfw.wl.colorManagement);
     if (_glfw.wl.registry)
         wl_registry_destroy(_glfw.wl.registry);
     if (_glfw.wl.display)

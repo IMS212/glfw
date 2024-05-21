@@ -66,7 +66,7 @@ static const char* fragment_shader_text =
 "out vec4 fragment;\n"
 "void main()\n"
 "{\n"
-"    fragment = vec4(color, 1.0);\n"
+"    fragment = vec4(2.2, 0.0, 0.0, 1.0);\n"
 "}\n";
 
 static void error_callback(int error, const char* description)
@@ -97,6 +97,8 @@ int main(void)
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+
+    GLint params;
 
     glfwSetKeyCallback(window, key_callback);
 
@@ -159,6 +161,7 @@ int main(void)
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
+
         glfwPollEvents();
     }
 
