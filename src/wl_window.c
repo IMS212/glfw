@@ -556,12 +556,27 @@ const struct wp_fractional_scale_v1_listener fractionalScaleListener =
     fractionalScaleHandlePreferredScale,
 };
 
+void colorListener(void *data,
+                          struct frog_color_managed_surface* frog_color_managed_surface,
+                          uint32_t transfer_function,
+                          uint32_t output_display_primary_red_x,
+                          uint32_t output_display_primary_red_y,
+                          uint32_t output_display_primary_green_x,
+                          uint32_t output_display_primary_green_y,
+                          uint32_t output_display_primary_blue_x,
+                          uint32_t output_display_primary_blue_y,
+                          uint32_t output_white_point_x,
+                          uint32_t output_white_point_y,
+                          uint32_t max_luminance,
+                          uint32_t min_luminance,
+                          uint32_t max_full_frame_luminance) {
+    printf("%d\n", max_luminance);
+}
+
 const struct frog_color_managed_surface_listener color_surface_interface_listener =
 {
-        // TODO ???
-   // colorSurfaceInterfaceListener,
+        colorListener,
 };
-
 static void xdgToplevelHandleConfigure(void* userData,
                                        struct xdg_toplevel* toplevel,
                                        int32_t width,
@@ -1081,6 +1096,8 @@ static GLFWbool createNativeSurface(_GLFWwindow* window,
 
     if (_glfw.wl.colorManagement) {
         window->wl.colorSurface = frog_color_management_factory_v1_get_color_managed_surface(_glfw.wl.colorManagement, window->wl.surface);
+        frog_color_managed_surface_add_listener(window->wl.colorSurface, &color_surface_interface_listener, window);
+        wl_display_flush(_glfw.wl.display);
 
         // TODO ???
         //frog_color_managed_surface_add_listener(window->wl.colorSurface,
