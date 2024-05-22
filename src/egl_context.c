@@ -291,8 +291,8 @@ static void swapBuffersEGL(_GLFWwindow* window)
             return;
 
         // TODO ACTUALLY MAKE THIS DO SOMETHING IMS
-        enum frog_color_managed_surface_primaries primaries = FROG_COLOR_MANAGED_SURFACE_PRIMARIES_REC709;
-        enum frog_color_managed_surface_transfer_function tf = FROG_COLOR_MANAGED_SURFACE_TRANSFER_FUNCTION_SCRGB_LINEAR;
+        enum frog_color_managed_surface_primaries primaries = FROG_COLOR_MANAGED_SURFACE_PRIMARIES_REC2020;
+        enum frog_color_managed_surface_transfer_function tf = FROG_COLOR_MANAGED_SURFACE_TRANSFER_FUNCTION_ST2084_PQ;
 
         frog_color_managed_surface_set_known_container_color_volume(window->wl.colorSurface, primaries);
         frog_color_managed_surface_set_known_transfer_function(window->wl.colorSurface, tf);

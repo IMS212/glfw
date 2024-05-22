@@ -595,6 +595,14 @@ GLFWAPI void glfwGetWindowPos(GLFWwindow* handle, int* xpos, int* ypos)
     _glfw.platform.getWindowPos(window, xpos, ypos);
 }
 
+GLFWAPI const GLFWhdrconfig* glfwGetHDRConfig(GLFWwindow* handle)
+{
+    _GLFWwindow* window = (_GLFWwindow*) handle;
+    assert(window != NULL);
+
+    return _glfw.platform.getHDRConfig(window);
+}
+
 GLFWAPI void glfwSetWindowPos(GLFWwindow* handle, int xpos, int ypos)
 {
     _GLFW_REQUIRE_INIT();

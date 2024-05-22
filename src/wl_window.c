@@ -556,7 +556,7 @@ const struct wp_fractional_scale_v1_listener fractionalScaleListener =
     fractionalScaleHandlePreferredScale,
 };
 
-void colorListener(void *data,
+void colorListener(void *userData,
                           struct frog_color_managed_surface* frog_color_managed_surface,
                           uint32_t transfer_function,
                           uint32_t output_display_primary_red_x,
@@ -570,7 +570,22 @@ void colorListener(void *data,
                           uint32_t max_luminance,
                           uint32_t min_luminance,
                           uint32_t max_full_frame_luminance) {
-    printf("%d\n", max_luminance);
+    _GLFWwindow* window = userData;
+    window->wl.hdrConfig =
+            _glfw_realloc(window->wl.hdrConfig,
+                          sizeof(GLFWhdrconfig));
+    window->wl.hdrConfig->max_full_frame_luminance = max_full_frame_luminance;
+    window->wl.hdrConfig->min_luminance = min_luminance;
+    window->wl.hdrConfig->max_luminance = max_luminance;
+    window->wl.hdrConfig->output_white_point_y = output_white_point_y;
+    window->wl.hdrConfig->output_white_point_x = output_white_point_x;
+    window->wl.hdrConfig->output_display_primary_blue_y = output_display_primary_blue_y;
+    window->wl.hdrConfig->output_display_primary_blue_x = output_display_primary_blue_x;
+    window->wl.hdrConfig->output_display_primary_green_y = output_display_primary_green_y;
+    window->wl.hdrConfig->output_display_primary_green_x = output_display_primary_green_x;
+    window->wl.hdrConfig->output_display_primary_red_y = output_display_primary_red_y;
+    window->wl.hdrConfig->output_display_primary_red_x = output_display_primary_red_x;
+    window->wl.hdrConfig->transfer_function = transfer_function;
 }
 
 const struct frog_color_managed_surface_listener color_surface_interface_listener =
@@ -2284,6 +2299,11 @@ void _glfwGetWindowPosWayland(_GLFWwindow* window, int* xpos, int* ypos)
 
     _glfwInputError(GLFW_FEATURE_UNAVAILABLE,
                     "Wayland: The platform does not provide the window position");
+}
+
+GLFWhdrconfig* _glfwGetHDRConfigWayland(_GLFWwindow* window)
+{
+    return window->wl.hdrConfig;
 }
 
 void _glfwSetWindowPosWayland(_GLFWwindow* window, int xpos, int ypos)

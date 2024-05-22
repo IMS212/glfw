@@ -448,6 +448,9 @@ int main(int argc, char** argv)
     glUseProgram(shader_program);
     uloc_project   = glGetUniformLocation(shader_program, "project");
     uloc_modelview = glGetUniformLocation(shader_program, "modelview");
+    GLFWhdrconfig* config = malloc(200);
+    glfwGetHDRConfig(window, config);
+    printf("%d", config->max_full_frame_luminance);
 
     /* Compute the projection matrix */
     f = 1.0f / tanf(view_angle / 2.0f);

@@ -490,6 +490,7 @@ GLFWbool _glfwConnectWayland(int platformID, _GLFWplatform* platform)
         .setWindowTitle = _glfwSetWindowTitleWayland,
         .setWindowIcon = _glfwSetWindowIconWayland,
         .getWindowPos = _glfwGetWindowPosWayland,
+        .getHDRConfig = _glfwGetHDRConfigWayland,
         .setWindowPos = _glfwSetWindowPosWayland,
         .getWindowSize = _glfwGetWindowSizeWayland,
         .setWindowSize = _glfwSetWindowSizeWayland,

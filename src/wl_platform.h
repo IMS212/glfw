@@ -382,6 +382,8 @@ typedef struct _GLFWwindowWayland
         struct libdecor_frame*  frame;
     } libdecor;
 
+	GLFWhdrconfig*				hdrConfig;
+
     _GLFWcursor*                currentCursor;
     double                      cursorPosX, cursorPosY;
 
@@ -617,6 +619,7 @@ void _glfwDestroyWindowWayland(_GLFWwindow* window);
 void _glfwSetWindowTitleWayland(_GLFWwindow* window, const char* title);
 void _glfwSetWindowIconWayland(_GLFWwindow* window, int count, const GLFWimage* images);
 void _glfwGetWindowPosWayland(_GLFWwindow* window, int* xpos, int* ypos);
+GLFWhdrconfig* _glfwGetHDRConfigWayland(_GLFWwindow* window);
 void _glfwSetWindowPosWayland(_GLFWwindow* window, int xpos, int ypos);
 void _glfwGetWindowSizeWayland(_GLFWwindow* window, int* width, int* height);
 void _glfwSetWindowSizeWayland(_GLFWwindow* window, int width, int height);

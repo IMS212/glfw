@@ -2074,6 +2074,31 @@ typedef struct GLFWgammaramp
     unsigned int size;
 } GLFWgammaramp;
 
+ /*! @brief HDR config.
+  *
+  *  This describes the display properties.
+  *
+  *  @sa @ref glfwGetHDRConfig
+  *
+  *  @since Added in version 3.5.
+  *
+  *  @ingroup window
+  */
+typedef struct GLFWhdrconfig {
+  uint32_t transfer_function;
+  uint32_t output_display_primary_red_x;
+  uint32_t output_display_primary_red_y;
+  uint32_t output_display_primary_green_x;
+  uint32_t output_display_primary_green_y;
+  uint32_t output_display_primary_blue_x;
+  uint32_t output_display_primary_blue_y;
+  uint32_t output_white_point_x;
+  uint32_t output_white_point_y;
+  uint32_t max_luminance;
+  uint32_t min_luminance;
+  uint32_t max_full_frame_luminance;
+ } GLFWhdrconfig;
+
 /*! @brief Image data.
  *
  *  This describes a single 2D image.  See the documentation for each related
@@ -3479,6 +3504,8 @@ GLFWAPI void glfwGetWindowPos(GLFWwindow* window, int* xpos, int* ypos);
  *  @ingroup window
  */
 GLFWAPI void glfwSetWindowPos(GLFWwindow* window, int xpos, int ypos);
+
+GLFWAPI const GLFWhdrconfig* glfwGetHDRConfig(GLFWwindow* window);
 
 /*! @brief Retrieves the size of the content area of the specified window.
  *
