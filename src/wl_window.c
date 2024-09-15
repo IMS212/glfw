@@ -586,6 +586,7 @@ void colorListener(void *userData,
     window->wl.hdrConfig->output_display_primary_red_y = output_display_primary_red_y;
     window->wl.hdrConfig->output_display_primary_red_x = output_display_primary_red_x;
     window->wl.hdrConfig->transfer_function = transfer_function;
+    frog_color_managed_surface_set_hdr_metadata(frog_color_managed_surface, transfer_function, output_display_primary_red_x, output_display_primary_red_y, output_display_primary_green_x, output_display_primary_green_y, output_display_primary_blue_x, output_display_primary_blue_y, output_white_point_x, output_white_point_y, max_luminance, min_luminance, max_full_frame_luminance);
 }
 
 const struct frog_color_managed_surface_listener color_surface_interface_listener =
