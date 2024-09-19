@@ -25,6 +25,8 @@
 //
 //========================================================================
 
+#include <stdio.h>
+
 #include "internal.h"
 
 #if defined(_GLFW_WIN32)
@@ -35,6 +37,9 @@
 #include <assert.h>
 #include <windowsx.h>
 #include <shellapi.h>
+#include <dxgi.h>
+#include <dxgi1_6.h>
+#include <windows.h>
 
 // Returns the window style for the specified window
 //
@@ -81,7 +86,6 @@ static const GLFWimage* chooseImage(int count, const GLFWimage* images,
 {
     int i, leastDiff = INT_MAX;
     const GLFWimage* closest = NULL;
-
     for (i = 0;  i < count;  i++)
     {
         const int currDiff = abs(images[i].width * images[i].height -
@@ -94,6 +98,121 @@ static const GLFWimage* chooseImage(int count, const GLFWimage* images,
     }
 
     return closest;
+}
+
+float GetDisplayWhitePoint() {
+    UINT32 numPaths, numModes;
+    LONG result;
+
+    // Get the number of paths and modes
+    result = GetDisplayConfigBufferSizes(QDC_ONLY_ACTIVE_PATHS, &numPaths, &numModes);
+    if (result != ERROR_SUCCESS) {
+        return FALSE;
+    }
+
+    // Allocate memory for the paths and modes
+    DISPLAYCONFIG_PATH_INFO* paths = malloc(numPaths * sizeof(DISPLAYCONFIG_PATH_INFO));
+    DISPLAYCONFIG_MODE_INFO* modes = malloc(numModes * sizeof(DISPLAYCONFIG_MODE_INFO));
+
+    if (!paths || !modes) {
+        free(paths);
+        free(modes);
+        return FALSE;
+    }
+
+    // Query the display configuration
+    result = QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &numPaths, paths, &numModes, modes, NULL);
+    if (result != ERROR_SUCCESS) {
+        free(paths);
+        free(modes);
+        return FALSE;
+    }
+
+    // Find the first active path
+    for (UINT32 i = 0; i < numPaths; i++) {
+        if (paths[i].flags & DISPLAYCONFIG_PATH_ACTIVE) {
+            DISPLAYCONFIG_SOURCE_DEVICE_NAME sourceName;
+            sourceName.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME;
+            sourceName.header.size = sizeof(DISPLAYCONFIG_SOURCE_DEVICE_NAME);
+            sourceName.header.adapterId = paths[i].sourceInfo.adapterId;
+            sourceName.header.id = paths[i].sourceInfo.id;
+
+            result = DisplayConfigGetDeviceInfo(&sourceName.header);
+            if (result == ERROR_SUCCESS) {
+                DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO advanced_color_info = {};
+                advanced_color_info.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO;
+                advanced_color_info.header.size = sizeof(advanced_color_info);
+                advanced_color_info.header.adapterId = paths[i].targetInfo.adapterId;
+                advanced_color_info.header.id = paths[i].targetInfo.id;
+                result = DisplayConfigGetDeviceInfo(&advanced_color_info.header);
+
+                if (result == ERROR_SUCCESS && advanced_color_info.advancedColorEnabled > 0) {
+                    DISPLAYCONFIG_SDR_WHITE_LEVEL white_level = {};
+                    white_level.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL;
+                    white_level.header.size = sizeof(white_level);
+                    white_level.header.adapterId = paths[i].targetInfo.adapterId;
+                    white_level.header.id = paths[i].targetInfo.id;
+                    if (DisplayConfigGetDeviceInfo(&white_level.header) == ERROR_SUCCESS)
+                        return white_level.SDRWhiteLevel;  // From wingdi.h.
+                }
+            }
+        }
+    }
+
+    free(paths);
+    free(modes);
+    // TODO get fucked
+    memset(0, 0, 0);
+    return 200.0f;
+}
+
+GLFWhdrconfig* _glfwGetHDRConfigWin32(_GLFWwindow* window)
+{
+    IDXGIFactory6* factory = NULL;
+    IDXGIAdapter4* adapter = NULL;
+    IDXGIOutput6* output = NULL;
+    DXGI_OUTPUT_DESC1 desc;
+
+    GLFWhdrconfig* config = malloc(sizeof(GLFWhdrconfig));
+
+    HRESULT hr = CreateDXGIFactory2(0, &IID_IDXGIFactory6, (void**)&factory);
+    if (SUCCEEDED(hr))
+    {
+        hr = factory->lpVtbl->EnumAdapters(factory, 0, (IDXGIAdapter**)&adapter);
+        if (SUCCEEDED(hr))
+        {
+            hr = adapter->lpVtbl->EnumOutputs(adapter, 0, (IDXGIOutput**)&output);
+            if (SUCCEEDED(hr))
+            {
+                hr = output->lpVtbl->GetDesc1(output, &desc);
+                if (SUCCEEDED(hr))
+                {
+                    config->output_display_primary_red_x = desc.RedPrimary[0];
+                    config->output_display_primary_red_y = desc.RedPrimary[1];
+                    config->output_display_primary_green_x = desc.GreenPrimary[0];
+                    config->output_display_primary_green_y = desc.GreenPrimary[1];
+                    config->output_display_primary_blue_x = desc.BluePrimary[0];
+                    config->output_display_primary_blue_y = desc.BluePrimary[1];
+                    config->output_white_point_x = desc.WhitePoint[0];
+                    config->output_white_point_y = desc.WhitePoint[1];
+                    config->max_luminance = desc.MaxLuminance;
+                    config->min_luminance = desc.MinLuminance;
+                    config->max_full_frame_luminance = desc.MaxFullFrameLuminance;
+                    config->sdr_white_level = GetDisplayWhitePoint();
+
+                }
+            }
+        }
+    }
+
+    // Clean up
+    if (output) output->lpVtbl->Release(output);
+    if (adapter) adapter->lpVtbl->Release(adapter);
+    if (factory) factory->lpVtbl->Release(factory);
+
+
+
+    return config;
 }
 
 // Creates an RGBA icon or cursor

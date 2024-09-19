@@ -229,6 +229,11 @@ void _glfwGetWindowPosNull(_GLFWwindow* window, int* xpos, int* ypos)
         *ypos = window->null.ypos;
 }
 
+GLFWhdrconfig* _glfwGetHDRConfigNull(_GLFWwindow* window) {
+
+    return malloc(sizeof(GLFWhdrconfig));
+}
+
 void _glfwSetWindowPosNull(_GLFWwindow* window, int xpos, int ypos)
 {
     if (window->monitor)

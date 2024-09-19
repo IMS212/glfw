@@ -6,7 +6,7 @@ add_library(glfw ${GLFW_LIBRARY_TYPE}
                  context.c init.c input.c monitor.c platform.c vulkan.c window.c
                  egl_context.c osmesa_context.c null_platform.h null_joystick.h
                  null_init.c null_monitor.c null_window.c null_joystick.c)
-
+add_compile_definitions(WINVER=0x0A00 _WIN32_WINNT=0x0A00)
 # The time, thread and module code is shared between all backends on a given OS,
 # including the null backend, which still needs those bits to be functional
 if (APPLE)
@@ -279,7 +279,7 @@ if (MINGW)
         target_include_directories(glfw PRIVATE "${GLFW_SOURCE_DIR}/deps/mingw")
     endif()
 endif()
-
+target_link_libraries(glfw PRIVATE d3d12.lib dxgi.lib d3dcompiler.lib dxguid.lib)
 # Workaround for the MS CRT deprecating parts of the standard library
 if (MSVC OR CMAKE_C_SIMULATE_ID STREQUAL "MSVC")
     target_compile_definitions(glfw PRIVATE _CRT_SECURE_NO_WARNINGS)

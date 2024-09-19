@@ -2085,18 +2085,19 @@ typedef struct GLFWgammaramp
   *  @ingroup window
   */
 typedef struct GLFWhdrconfig {
-  uint32_t transfer_function;
-  uint32_t output_display_primary_red_x;
-  uint32_t output_display_primary_red_y;
-  uint32_t output_display_primary_green_x;
-  uint32_t output_display_primary_green_y;
-  uint32_t output_display_primary_blue_x;
-  uint32_t output_display_primary_blue_y;
-  uint32_t output_white_point_x;
-  uint32_t output_white_point_y;
-  uint32_t max_luminance;
-  uint32_t min_luminance;
-  uint32_t max_full_frame_luminance;
+  float transfer_function;
+  float output_display_primary_red_x;
+  float output_display_primary_red_y;
+  float output_display_primary_green_x;
+  float output_display_primary_green_y;
+  float output_display_primary_blue_x;
+  float output_display_primary_blue_y;
+  float output_white_point_x;
+  float output_white_point_y;
+  float max_luminance;
+  float min_luminance;
+  float max_full_frame_luminance;
+  float sdr_white_level;
  } GLFWhdrconfig;
 
 /*! @brief Image data.

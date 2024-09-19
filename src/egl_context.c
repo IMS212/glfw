@@ -26,7 +26,6 @@
 //========================================================================
 
 #include "internal.h"
-#include "frog-color-management-v1-client-protocol.h"
 
 #include <stdio.h>
 #include <string.h>
